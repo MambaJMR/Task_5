@@ -2,10 +2,11 @@
 using Bogus;
 using System;
 using System.Globalization;
+using Task_5.Interfaces;
 
 namespace Task_5.Services
 {
-    public class ErrorGenerator
+    public class ErrorGenerator : IErrorGenerator
     {
         private readonly Random random;
         private readonly int errorCount;

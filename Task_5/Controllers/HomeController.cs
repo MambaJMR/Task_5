@@ -16,14 +16,22 @@ namespace Task_5.Controllers
             _generator = dataGenerator;
         }
 
-        [HttpGet]
-        public IActionResult GetUsers()
+        [HttpPost]
+        [Route("/Index")]
+        public IActionResult GetUsers([FromBody] UserSettings userSettings)
         {
-            var user = _generator.GeneratePerson("ru", 1);
-            var test = user[0].FirstName.ToString();
+            
+            var user = _generator.GeneratePersons(userSettings.region, userSettings.seed);
+            return Ok(user);
+        }
 
+        [HttpPost]
+        [Route("/ErrorUsers")]
+        public IActionResult GetUsersWithError(string region, int errorCount, int seed)
+        {
+            var _errorGenerator = new ErrorGenerator(seed, errorCount, region);
 
-            return Ok(test);
+            return Ok();
         }
     }
 }
