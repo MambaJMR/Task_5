@@ -2,8 +2,9 @@
 {
     public class UserSettings
     {
-        public string region {  get; set; }
-        public int seed { get; set; }
+        public string region { get; set; } = "ru";
+        public int seed { get; set; } = 0;
+        public int errorValue {  get; set; } = 0;
 
     }
 }

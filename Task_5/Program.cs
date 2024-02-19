@@ -11,6 +11,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors();
 builder.Services.AddScoped<IDataGenerator, DataGenerator>();
+builder.Services.AddScoped<IUserResponse, UserResponse>();
+//builder.Services.AddScoped<IErrorGenerator, ErrorGenerator>();
 //builder.Services.AddTransient<IErrorGenerator, ErrorGenerator>();
 
 var app = builder.Build();

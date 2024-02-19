@@ -10,28 +10,20 @@ namespace Task_5.Controllers
     [ApiController]
     public class HomeController : ControllerBase
     {
-        IDataGenerator _generator;
-        public HomeController(IDataGenerator dataGenerator)
+        IUserResponse _userResponse;
+        public HomeController(IUserResponse userResponse)
         {
-            _generator = dataGenerator;
+
+            _userResponse = userResponse;
+
         }
 
         [HttpPost]
         [Route("/Index")]
-        public IActionResult GetUsers([FromBody] UserSettings userSettings)
+        public  IActionResult GetUsers([FromForm] UserSettings userSettings)
         {
-            
-            var user = _generator.GeneratePersons(userSettings.region, userSettings.seed);
+            var user =  _userResponse.GetUsers(userSettings.seed, userSettings.region, userSettings.errorValue);
             return Ok(user);
-        }
-
-        [HttpPost]
-        [Route("/ErrorUsers")]
-        public IActionResult GetUsersWithError(string region, int errorCount, int seed)
-        {
-            var _errorGenerator = new ErrorGenerator(seed, errorCount, region);
-
-            return Ok();
         }
     }
 }

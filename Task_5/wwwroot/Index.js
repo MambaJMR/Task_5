@@ -1,81 +1,137 @@
 let page = 1;
 let count = 1;
-let getValue = "en";
-const sel = document.getElementById("sel");
+const randButt = document.getElementById("seedButton");
+const form = document.querySelector('form');
 
-
-async function getUsers(region, seed) {
-     response = await fetch('https://localhost:44360/Index',
-    {
-        method: "POST",
-        body: JSON.stringify(
-        {
-            region: region,
-            seed: seed
-        }),
-        headers: { "Content-Type": "application/json" }
-    })
-    if (response.ok === true) {
-        const users = await response.json();
-        const rows = document.querySelector("tbody");
-        users.forEach(user => rows.append(row(user)));
-    }
-}
-
-function row(user) {
-
-
-    const tr = document.createElement("tr");
-    const numberTd = document.createElement("td");
-    numberTd.append(count);
-    tr.append(numberTd);
-    count++;
-    const idTd = document.createElement("td");
-    idTd.append();
-    tr.append(idTd);
-
-    const nameTd = document.createElement("td");
-    nameTd.append(user.fullName);
-    tr.append(nameTd);
-
-    const addressTd = document.createElement("td");
-    addressTd.append(user.address);
-    tr.append(addressTd);
-
-    const phoneTd = document.createElement("td");
-    phoneTd.append(user.phone);
-    tr.append(phoneTd);
-    return tr;
-}
-
-function updateTextInput(val) {
-    let valMax = document.getElementById("customRange").max;
-    let values = document.getElementById('textInput').value;
-    if (values > valMax)
-    {
-        val = values;
-    }
-    else
-    {
-        document.getElementById('textInput').value = val; 
-        console.log(values);
-    }
-    
-  }
-
-  window.addEventListener("scroll", () => 
-  {
+window.addEventListener("scroll", () => 
+{
     const documentRect = document.documentElement.getBoundingClientRect();
     if (documentRect.bottom < document.documentElement.clientHeight + 150)
     {
-        page++;
-        getUsers(getValue, 1 + page);
+        data = {
+                region: form.querySelector("[name='region']").value,
+                seed: form.querySelector("[name='seed']").value,
+                errorValue: form.querySelector("[name='errorValue']").value
+            };
+            $.ajax({
+                url: 'https://localhost:44360/Index',
+                type: 'POST',
+                data: data,
+                success: function(response) {
+                    appendTableData(response)
+                }
+            });
+    }           
+});
+
+  $('form').on('change', function(e) {
+    e.preventDefault();
+    var data = {};
+    $(this).find('input, select').each(function() {
+        data[this.name] = this.value;
+    });
+    $.ajax({
+        url: 'https://localhost:44360/Index',
+        type: 'POST',
+        data: data,
+        success: function(response) {
+            createTable(response)
+        }
+    });
+});
+  function createTable(data) {
+    var table = document.createElement('table');
+    table.className ='table container';
+    table.id = 'myTable';
+    var thead, tbody;
+    count = 1;
+    document.body.removeChild(document.body.lastChild); // удаляем старую таблицу
+
+    thead = document.createElement('thead');
+    tr = document.createElement('tr');
+    td = document.createElement('th');
+    td.textContent = "#";
+    tr.appendChild(td);
+
+    td = document.createElement('th');
+    td.textContent = "ID";
+    tr.appendChild(td);
+
+    td = document.createElement('th');
+    td.textContent = 'Full Name';
+    tr.appendChild(td);
+
+    td = document.createElement('th');
+    td.textContent = 'Address';
+    tr.appendChild(td);
+
+    td = document.createElement('th');
+    td.textContent = 'Phone';
+    tr.appendChild(td);
+
+    thead.appendChild(tr);
+    table.appendChild(thead);
+
+    tbody = document.createElement('tbody');
+    for(var i = 0; i < data.length; i++) {
+        tr = document.createElement('tr');
+
+        td = document.createElement('td');
+        td.textContent = count;
+        count++;
+        tr.appendChild(td);
+
+        td = document.createElement('td');
+        td.textContent = data[i].id;
+        tr.appendChild(td);
+
+        td = document.createElement('td');
+        td.textContent = data[i].fullName;
+        tr.appendChild(td);
+
+        td = document.createElement('td');
+        td.textContent = data[i].address;
+        tr.appendChild(td);
+
+        td = document.createElement('td');
+        td.textContent = data[i].phone;
+        tr.appendChild(td);
+
+        tbody.appendChild(tr);
     }
 
-  })
-  sel.addEventListener("change", () => 
-  {
-      getValue = sel.value;
-      console.log("В методе "+ getValue);
-  })
-getUsers(getValue, 1);
+    table.appendChild(tbody);
+    document.body.appendChild(table);
+}
+
+function appendTableData(data) {
+    var table = document.getElementById('myTable');
+    var tbody = table.getElementsByTagName('tbody')[0];
+    var tr, td;
+
+    for(var i = 0; i < data.length; i++) {
+        tr = document.createElement('tr');
+        td = document.createElement('td');
+        td.textContent = count;
+        count++;
+        tr.appendChild(td);
+
+        td = document.createElement('td');
+        td.textContent = data[i].id;
+        tr.appendChild(td);
+
+        td = document.createElement('td');
+        td.textContent = data[i].fullName;
+        tr.appendChild(td);
+
+        td = document.createElement('td');
+        td.textContent = data[i].address;
+        tr.appendChild(td);
+
+        td = document.createElement('td');
+        td.textContent = data[i].phone;
+        tr.appendChild(td);
+
+        tbody.appendChild(tr);
+    }
+}

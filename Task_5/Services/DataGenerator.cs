@@ -12,6 +12,7 @@ namespace Task_5.Services
             
             Randomizer.Seed = new Random(seed);
             var _personModelFake = new Faker<TestUser>(region)
+                .RuleFor(u => u.Id, f => f.Random.Guid())
                 .RuleFor(u => u.FullName, f => f.Name.FindName()) 
                 .RuleFor(u => u.Address, f => f.Address.FullAddress())
                 .RuleFor(u => u.Phone, f => f.Phone.PhoneNumber());

@@ -1,7 +1,9 @@
-﻿namespace Task_5.Interfaces
+﻿using Task_5.Models;
+
+namespace Task_5.Interfaces
 {
     public interface IErrorGenerator
     {
-        string ErrorGenerate(string user);
+        List<TestUser> UserRandomString(List<TestUser> users);
     }
 }
