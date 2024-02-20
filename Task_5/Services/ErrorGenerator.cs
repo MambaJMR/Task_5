@@ -6,23 +6,24 @@ using Task_5.Interfaces;
 using Task_5.Models;
 using System.Reflection;
 using Bogus.Bson;
+using FluentRandomPicker;
 
 namespace Task_5.Services
 {
     public class ErrorGenerator : IErrorGenerator
     {
         private readonly Random random;
-        private readonly int errorCount;
+        private double errorCount;
         private readonly Faker randomCharOrNum;
         private int errorVariants = 3;
         private int propertiesUser = 3;
-        public ErrorGenerator(int seed, int errorCount, string region)
+        public ErrorGenerator(int seed, double errorCount, string region)
         {
             randomCharOrNum = new Faker(region);
             random = new Random(seed);
             this.errorCount = errorCount;
         }
-        string RemoveChar(string user)
+        private string RemoveChar(string user)
         {
             if (user.Length != 1)
             {
@@ -31,14 +32,14 @@ namespace Task_5.Services
             }
             return user;
         }
-        string InsertChar(string user)
+        private string InsertChar(string user)
         {
             Randomizer.Seed = random;
             var randomChar = randomCharOrNum.Lorem.Letter(1);
             var randomNum = randomCharOrNum.Random.Int(0, user.Length);
             return user.Insert(randomNum, randomChar);
         }
-        string ReplaceChar(string user)
+        private string ReplaceChar(string user)
         {
             Randomizer.Seed = random;
             var randomChar = Convert.ToChar(randomCharOrNum.Random.Replace("*"));
@@ -48,13 +49,8 @@ namespace Task_5.Services
 
         private string ErrorGenerate(string user)
         {
-            //object[] met = { RemoveChar(user), InsertChar(user), ReplaceChar(user) };
-            
-            //for (int i = 0; i < errorCount; i++)
-           // {
                 int value = random.Next(errorVariants);
 
-                //user = met[value].ToString();
                 switch (value)
                 {
                     case 0:
@@ -67,17 +63,15 @@ namespace Task_5.Services
                         user = ReplaceChar(user);
                         break;
                 }
-           // }
             return user;
         }
 
         public List<TestUser> UserRandomString(List<TestUser> users)
         {
-            
-
             foreach (var user in users)
             {
-                for (int i = 0; i < errorCount; i++)
+                
+                for (int i = 0; i < CalculateProbability(errorCount); i++)
                 {
                     int rnd = random.Next(propertiesUser);
                     switch (rnd)
@@ -95,6 +89,22 @@ namespace Task_5.Services
                 }
             }
             return users;
+        }
+
+        private double CalculateProbability(double errorValue)
+        {
+            if (errorValue % 2 == 0)
+            {
+                return errorValue;
+            }
+            else
+            {
+                var chance = Out.Of()
+                          .Value(errorValue + 0.5).WithPercentage(50)
+                          .AndValue(errorValue - 0.5).WithPercentage(50)
+                          .PickOne();
+                return chance;
+            }
         }
     }
 }

@@ -1,8 +1,51 @@
 let page = 1;
 let count = 1;
-const randButt = document.getElementById("seedButton");
+document.getElementById('textInput').max = 1000;
 const form = document.querySelector('form');
 
+document.getElementById('range').addEventListener('input', function() {
+    var value = this.value;
+    document.getElementById('textInput').value = value;
+});
+
+document.getElementById('textInput').addEventListener('input', function() {
+    var value = this.value;
+    if (value > 10) {
+        value = 10;
+    }
+    document.getElementById('range').value = value;
+});
+
+document.getElementById('textInput').addEventListener('input', function() {
+    var value = this.value;
+    if (value > 1000) {
+        document.getElementById('textInput').value = 1000;
+    }
+    if (value < 0) {
+        document.getElementById('textInput').value = 0;
+    }
+    
+});
+
+document.getElementById('seedButton').addEventListener('click', function() {
+    var randomNumber = Math.floor(Math.random()  *  10000);
+    document.getElementById('seed').value = randomNumber; 
+
+    data = {
+        region: form.querySelector("[name='region']").value,
+        seed: form.querySelector("[name='seed']").value,
+        errorValue: form.querySelector("[name='errorValue']").value
+    };
+    $.ajax({
+        url: '/Index',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: function(response) {
+            createTable(response)
+        }
+    });
+});
 window.addEventListener("scroll", () => 
 {
     const documentRect = document.documentElement.getBoundingClientRect();
@@ -10,18 +53,20 @@ window.addEventListener("scroll", () =>
     {
         data = {
                 region: form.querySelector("[name='region']").value,
-                seed: form.querySelector("[name='seed']").value,
+                seed: form.querySelector("[name='seed']").value + page,
                 errorValue: form.querySelector("[name='errorValue']").value
             };
             $.ajax({
-                url: 'https://localhost:44360/Index',
+                url: '/Index',
                 type: 'POST',
-                data: data,
+                contentType: 'application/json',
+                data: JSON.stringify(data),
                 success: function(response) {
                     appendTableData(response)
                 }
             });
-    }           
+    }
+    page++;           
 });
 
   $('form').on('change', function(e) {
@@ -31,9 +76,10 @@ window.addEventListener("scroll", () =>
         data[this.name] = this.value;
     });
     $.ajax({
-        url: 'https://localhost:44360/Index',
+        url: '/Index',
         type: 'POST',
-        data: data,
+        contentType: 'application/json',
+        data: JSON.stringify(data),
         success: function(response) {
             createTable(response)
         }

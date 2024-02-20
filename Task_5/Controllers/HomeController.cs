@@ -20,7 +20,7 @@ namespace Task_5.Controllers
 
         [HttpPost]
         [Route("/Index")]
-        public  IActionResult GetUsers([FromForm] UserSettings userSettings)
+        public  IActionResult GetUsers([FromBody] UserSettings userSettings)
         {
             var user =  _userResponse.GetUsers(userSettings.seed, userSettings.region, userSettings.errorValue);
             return Ok(user);

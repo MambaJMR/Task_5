@@ -11,7 +11,7 @@ namespace Task_5.Services
         {
             _generator = dataGenerator;
         }
-        public List<TestUser> GetUsers(int seed, string region, int errorValue)
+        public List<TestUser> GetUsers(int seed, string region, double errorValue)
         {
             _errorGenerator = new ErrorGenerator(seed, errorValue, region);
             var user = _generator.GeneratePersons(region, seed);

@@ -4,6 +4,6 @@ namespace Task_5.Interfaces
 {
     public interface IUserResponse
     {
-        List<TestUser> GetUsers(int seed, string region, int errorValue);
+        List<TestUser> GetUsers(int seed, string region, double errorValue);
     }
 }
